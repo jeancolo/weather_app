@@ -312,5 +312,3 @@ function rgbToHex({ r, g, b }) {
 function lerp(a, b, t) {
   return a + (b - a) * t;
 }
- 
- 
