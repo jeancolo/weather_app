@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My web app</title>
+        <link rel="stylesheet" href="style/style.css">
+        <script src="js/index.js"></script>
+    </head>
+    <body >
+        <header>
+            <h1>This is the header</h1>
+            <p></p>
+        </header>
+        <main class="layout">
+            <section id="map-container">
+            <h2>our map</h2>
+            <div id="map"></div>
+            </section>
+ 
+            <section id="chart-container">
+            <h2>our chart</h2>
+            <button class="tab-button active" data-tab="forcast_table">
+                Table
+                </button>
+                
+                        
+                <div id="forcast_table" class="tab-panel active">
+                Forcast Table
+                <div>
+            <div id="chart">
+            </div>
+            </section>
+
+ // Select an element
+document.addEventListener('DOMContentLoaded', 
+() => 
+{ async function get_weather_forcast(lat, lon) {
+    console.log("Fetching forecast for:", lat, lon);
+    const pointsRes = await fetch(`https://api.weather.gov/points/${lat},${lon}`);
+    const pointsData = await pointsRes.json();
+ 
+    const forecastRes = await fetch(pointsData.properties.forecast);
+    return await forecastRes.json();
+  }
+ 
+  navigator.geolocation.getCurrentPosition(position => {
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
+ 
+    get_weather_forcast(lat,lon).then(data => {
+      //update_forcast(data);
+        data.properties.periods.forEach(period => {
+          const tbody = document.querySelector('#forecast tbody');
+          console.log(tbody)
+            tbody.innerHTML = ""; // Clear existing rows  
+            data.properties.periods.forEach(period => {
+              const row = document.createElement('tr');
+ 
+              row.innerHTML = `
+                <td>${period.name}</td>
+                <td>${period.temperature}°F</td>
+                <td>${period.shortForecast}</td>
+              `;
+ 
+              tbody.appendChild(row);
+            });
+        });
+      }              
+    )
+  });
+        
+ 
+ 
+// A simple variable
+const projectTitle = "Weather Data Explorer";
+ 
+// Logging output
+console.log(projectTitle);
+ 
+ 
+    // Select an element
+    const heading = document.querySelector("h1");
+    console.log(heading)
+    // Change its text
+    heading.textContent = projectTitle;
+ 
+ 
+ 
+  const buttons = document.querySelectorAll('.tab-button');
+  const panels = document.querySelectorAll('.tab-panel');
+ 
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const target = button.dataset.tab;
+ 
+      // Update button states
+      buttons.forEach(b => b.classList.remove('active'));
+      button.classList.add('active');
+ 
+      // Update panel visibility
+      panels.forEach(panel => {
+        panel.classList.toggle(
+          'active',
+          panel.id === target
+        );
+      });
+    });
+  });
+    
+ 
+});
+ </main>
+         
+    </body>
+</html>
